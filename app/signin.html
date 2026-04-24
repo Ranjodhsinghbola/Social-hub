@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Social Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Social<span>Hub</span></h1>
+                <p>Create a new account to get started.</p>
+            </div>
+            
+          
+            <div id="message" style="min-height: 60px; margin-bottom: 15px;"></div>
+            
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="fullname">Full Name</label>
+                    <input type="text" name="username" id="fullname" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign Up</button>
+            </form>
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showMessage(message, isSuccess) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.style.backgroundColor = isSuccess ? '#00c851' : '#ff4444';
+            msgDiv.style.color = 'white';
+            msgDiv.style.padding = '10px';
+            msgDiv.style.borderRadius = '5px';
+            msgDiv.innerHTML = (isSuccess ? '✅ ' : '❌ ') + message;
+            msgDiv.style.display = 'block';
+        }
+        
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('register_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(result.message, true);
+                    setTimeout(() => {
+                        window.location.href = 'login.html?success=1';
+                    }, 1500);
+                } else {
+                    showMessage(result.message, false);
+                }
+            } catch (error) {
+                showMessage('Connection error', false);
+            }
+        });
+    </script>
+</body>
+</html>
